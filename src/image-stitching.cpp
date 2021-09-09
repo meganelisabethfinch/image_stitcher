@@ -59,13 +59,13 @@ int main(int argc, char** argv )
         }
     }
 
-    // Collect keypoints coords for good matches
+    // Collect keypoints coords for the good matches
     std::vector<cv::Point2f> pts1;
     std::vector<cv::Point2f> pts2; 
 
     for (int i = 0; i < goodMatches.size(); i++) {
         int idx = goodMatches[i].queryIdx;
-        pts1.push_back(allKeypoints[0][idx].pt); // ** I think this bit is wrong :-(
+        pts1.push_back(allKeypoints[0][idx].pt);
     }
 
     for (int i = 0; i < goodMatches.size(); i++) {
@@ -73,48 +73,51 @@ int main(int argc, char** argv )
         pts2.push_back(allKeypoints[1][idx].pt);
     }
 
-    // check we have enough matches for homography
+    // Check we have enough matches for homography
     if (goodMatches.size() < 4) {
        printf("Not enough matches. 4+ matches are needed to compute a homography.\n");
        return -1;
     }
 
-    // find homography
+    // Find homography
     cv::Mat H;
     H = cv::findHomography(pts1, pts2, cv::RANSAC);
 
-    // warp perspective to stitch the images together
+    // Warp perspective on the right image
     int nrows = images[0].rows;
     int ncols = images[0].cols + images[1].cols;
     cv::Mat result = cv::Mat(nrows, ncols, 0);
     cv::warpPerspective(images[0], result, H, cv::Size(ncols,nrows));
     
-    // set left half of result to images[1]
+    // Add in the left image
     cv::Mat paddedImage;
-    // cv::hconcat(images[1], cv::Mat::zeros(images[0].rows, images[0].cols, 0), paddedImage);
-    /*
-    namedWindow("Padded", WINDOW_AUTOSIZE);
-    imshow("Padded", paddedImage);
-    waitKey(0);
-
-    
-    printf("full rows: %d\n", full.rows);
-    printf("full cols: %d\n", full.cols);
-    printf("result rows: %d\n", result.rows);
-    printf("result cols: %d\n", result.cols);
-    */
-    result = result + paddedImage;
+    cv::hconcat(images[1], cv::Mat::zeros(images[0].rows, images[0].cols, 0), paddedImage);
+    result = result + paddedImage; // how to *set* this instead of adding?
 
     namedWindow("Panorama", WINDOW_AUTOSIZE);
     imshow("Panorama", result);
     waitKey(0);
 
-    cv::Mat matchesVis;
-    // cv::drawMatches(img1, kps1, img2, kps2, goodMatches, matchesVis);
     /*
+    // Collect keypoints for the good matches
+    std::vector<cv::KeyPoint> kps0;
+    std::vector<cv::KeyPoint> kps1; 
+
+    for (int i = 0; i < goodMatches.size(); i++) {
+        int idx = goodMatches[i].queryIdx;
+        kps0.push_back(allKeypoints[0][idx]);
+    }
+
+    for (int i = 0; i < goodMatches.size(); i++) {
+        int idx = goodMatches[i].trainIdx;
+        kps1.push_back(allKeypoints[1][idx]);
+    }
+
+    cv::Mat matchesVis;
+    cv::drawMatches(images[1], kps1, images[0], kps0, goodMatches, matchesVis);
     
     namedWindow("Display Matches", WINDOW_AUTOSIZE );
-    imshow("Display Matches", output);
+    imshow("Display Matches", matchesVis);
     waitKey(0); // Any keypress to exit
     */
 
