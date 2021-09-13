@@ -90,9 +90,12 @@ int main(int argc, char** argv )
     cv::warpPerspective(images[0], result, H, cv::Size(ncols,nrows));
     
     // Add in the left image
-    cv::Mat paddedImage;
-    cv::hconcat(images[1], cv::Mat::zeros(images[0].rows, images[0].cols, 0), paddedImage);
-    result = result + paddedImage; // how to *set* this instead of adding?
+    for (int i = 0; i < images[1].rows; i++) {
+        for (int j = 0; j < images[1].cols; j++) {
+            result.at<uchar>(i,j) = images[1].at<uchar>(i,j);
+        }
+    }
+    
 
     namedWindow("Panorama", WINDOW_AUTOSIZE);
     imshow("Panorama", result);
