@@ -4,6 +4,7 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/features2d.hpp>
 #include <opencv2/core/types.hpp>
+#include <opencv2/imgcodecs.hpp>
 
 using namespace cv;
 
@@ -26,7 +27,8 @@ int main(int argc, char** argv )
         }
         images.push_back(img);
     }
-    
+    printf("Read images.\n");
+
     // Set-up SIFT
     cv::Ptr<cv::SIFT> detector = cv::SIFT::create();
 
@@ -38,7 +40,9 @@ int main(int argc, char** argv )
         cv::Mat descriptors;
 
         detector->detect(images[i], keypoints);
+        printf("Found keypoints.\n");
         detector->compute(images[i], keypoints, descriptors);
+        printf("Computed descriptors.\n");
 
         allKeypoints.push_back(keypoints);
         allDescriptors.push_back(descriptors);
@@ -48,6 +52,7 @@ int main(int argc, char** argv )
     cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create();
     std::vector<std::vector<cv::DMatch>> rawMatches;
     matcher->knnMatch(allDescriptors[0], allDescriptors[1], rawMatches, 2);
+    printf("Found raw matches.\n");
 
     std::vector<cv::DMatch> goodMatches;
 
@@ -58,6 +63,8 @@ int main(int argc, char** argv )
             goodMatches.push_back(m[0]);
         }
     }
+
+    printf("Found good matches.\n");
 
     // Collect keypoints coords for the good matches
     std::vector<cv::Point2f> pts1;
@@ -100,6 +107,8 @@ int main(int argc, char** argv )
     namedWindow("Panorama", WINDOW_AUTOSIZE);
     imshow("Panorama", result);
     waitKey(0);
+
+    imwrite("./images/result.png", result);
 
     /*
     // Collect keypoints for the good matches
