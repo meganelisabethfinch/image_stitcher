@@ -1,8 +1,5 @@
 class Stitcher {
     private:
-        std::vector<cv::Mat> workingImages;
-
-        // compute keypoints
 
         // compute descriptors
 
@@ -16,6 +13,6 @@ class Stitcher {
         // then pops/returns final image on stack
 
     public:
-        // constructor - take *copy of* each image
-        Stitcher(std::vector<cv::Mat> images);
+        // constructor
+        Stitcher();
 };
