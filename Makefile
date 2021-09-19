@@ -1,9 +1,10 @@
-CFLAGS = -std=c++11
+CFLAGS = -std=c++11 -I./headers
 LDFLAGS = `pkg-config --cflags --libs opencv4`
 SRC = ./src/*.cpp
 
-ImageStitcher:
-	g++ $(LDFLAGS) $(CFLAGS) ./src/main.cpp -o ./build/ImageStitcher
+app:
+	g++ $(LDFLAGS) $(CFLAGS) $(SRC) -o ./build/ImageStitcher
+
 
 run:
 	./build/ImageStitcher -i ./images/NewnLeft.jpeg -i ./images/NewnRight.jpeg -o ./images/result.jpeg

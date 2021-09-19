@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string>
 
-#include "./headers/stitcher.hpp"
+#include "stitcher.hpp"
 
 #include <opencv2/imgcodecs.hpp>
 
@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
     }
 
     // Create stitcher
-    Stitcher stitcher = Stitcher(inputImages);
+    // Stitcher stitcher = Stitcher(inputImages);
 
     // call stitcher
 
