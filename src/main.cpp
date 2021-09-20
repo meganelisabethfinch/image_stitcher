@@ -34,15 +34,15 @@ int main(int argc, char** argv) {
     }
 
     // Check mandatory options
-    if (inputImages.size() < 2 || outputImagePath == "") {
-        printf("Usage: <inputImagePaths> <outpathImagePath>");
+    if (inputImages.size() != 2 || outputImagePath == "") {
+        printf("Usage: <inputImagePathLeft> <inputImagePathRight> <outpathImagePath>");
         return -1;
     }
 
     // Create stitcher
     Stitcher stitcher;
     cv::Mat result;
-    stitcher.stitch(inputImages, result);
+    stitcher.stitch(inputImages[0], inputImages[1], result);
 
     // Save image to output file
     imwrite(outputImagePath, result);

@@ -7,4 +7,4 @@ app:
 
 
 run:
-	./build/ImageStitcher -i ./images/mountain1.png -i ./images/mountain2.png -o ./images/result.jpeg
+	./build/ImageStitcher -i ./images/NewnLeft.jpeg -i ./images/NewnRight.jpeg -o ./images/result.jpeg
