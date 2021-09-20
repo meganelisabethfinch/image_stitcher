@@ -40,9 +40,11 @@ int main(int argc, char** argv) {
     }
 
     // Create stitcher
-    // Stitcher stitcher = Stitcher(inputImages);
+    Stitcher stitcher;
+    cv::Mat result;
+    stitcher.stitch(inputImages, result);
 
-    // call stitcher
+    // Save image to output file
+    imwrite(outputImagePath, result);
 
-    // save image to output file
 }
