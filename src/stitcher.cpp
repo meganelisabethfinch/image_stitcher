@@ -45,7 +45,7 @@ int Stitcher::stitch(cv::Mat leftImg, cv::Mat rightImg, cv::Mat &out)
     for (int i = 0; i < rawMatches.size(); i++)
     {
         std::vector<cv::DMatch> m = rawMatches[i];
-        if (m.size() == 2 && (m[0].distance < m[1].distance * 0.6))
+        if (m.size() == 2 && (m[0].distance < m[1].distance * this->ratio))
         {
             // Lowe's Ratio Test: If d1/d2 < 0.6, this is a good match
             goodMatches.push_back(m[0]);
@@ -88,15 +88,6 @@ int Stitcher::stitch(cv::Mat leftImg, cv::Mat rightImg, cv::Mat &out)
     cv::warpPerspective(rightImg, result, H, cv::Size(ncols, nrows));
 
     // Add in the left image
-    /*
-    for (int y = 0; y < leftImg.rows; y++)
-    {
-        for (int x = 0; x < leftImg.cols; x++)
-        {
-            result.at<uchar>(y, x) = leftImg.at<uchar>(y, x);
-        }
-    }
-    */
    cv::Rect mask = cv::Rect(0,0,leftImg.cols,leftImg.rows);
    leftImg.copyTo(result(mask));
 
