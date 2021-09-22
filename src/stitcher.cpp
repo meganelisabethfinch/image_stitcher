@@ -5,6 +5,7 @@
 #include <opencv2/features2d.hpp>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/imgproc.hpp>
+#include <opencv2/core/types.hpp>
 
 Stitcher::Stitcher(double ratio) : ratio(ratio) {}
 
@@ -87,6 +88,7 @@ int Stitcher::stitch(cv::Mat leftImg, cv::Mat rightImg, cv::Mat &out)
     cv::warpPerspective(rightImg, result, H, cv::Size(ncols, nrows));
 
     // Add in the left image
+    /*
     for (int y = 0; y < leftImg.rows; y++)
     {
         for (int x = 0; x < leftImg.cols; x++)
@@ -94,6 +96,9 @@ int Stitcher::stitch(cv::Mat leftImg, cv::Mat rightImg, cv::Mat &out)
             result.at<uchar>(y, x) = leftImg.at<uchar>(y, x);
         }
     }
+    */
+   cv::Rect mask = cv::Rect(0,0,leftImg.cols,leftImg.rows);
+   leftImg.copyTo(result(mask));
 
     out = cv::Mat(result);
     return 0;
