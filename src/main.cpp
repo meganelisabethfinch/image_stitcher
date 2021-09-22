@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
             case 'i': {
                 cv::Mat image = cv::imread(optarg, 1);
                 if (!image.data) {
-                    printf("No image data for %s.\n", optarg);
+                    fprintf(stderr, "No image data for %s.\n", optarg);
                     return -1;
                 }
                 inputImages.push_back(image);

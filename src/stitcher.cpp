@@ -72,7 +72,7 @@ int Stitcher::stitch(cv::Mat leftImg, cv::Mat rightImg, cv::Mat &out)
     // Check we have enough matches for homography
     if (goodMatches.size() < 4)
     {
-        printf("Not enough matches. 4+ matches are needed to compute a homography.\n");
+        fprintf(stderr, "Not enough matches. 4+ matches are needed to compute a homography.\n");
         return -1;
     }
 
@@ -81,17 +81,17 @@ int Stitcher::stitch(cv::Mat leftImg, cv::Mat rightImg, cv::Mat &out)
     H = cv::findHomography(rightPts, leftPts, cv::RANSAC);
 
     // Warp perspective on the right image
-    int nrows = rightGrey.rows;
-    int ncols = rightGrey.cols + leftGrey.cols;
-    cv::Mat result = cv::Mat(nrows, ncols, rightGrey.type());
-    cv::warpPerspective(rightGrey, result, H, cv::Size(ncols, nrows));
+    int nrows = rightImg.rows;
+    int ncols = rightImg.cols + leftImg.cols;
+    cv::Mat result = cv::Mat(nrows, ncols, rightImg.type());
+    cv::warpPerspective(rightImg, result, H, cv::Size(ncols, nrows));
 
     // Add in the left image
-    for (int i = 0; i < leftGrey.rows; i++)
+    for (int y = 0; y < leftImg.rows; y++)
     {
-        for (int j = 0; j < leftGrey.cols; j++)
+        for (int x = 0; x < leftImg.cols; x++)
         {
-            result.at<uchar>(i, j) = leftGrey.at<uchar>(i, j);
+            result.at<uchar>(y, x) = leftImg.at<uchar>(y, x);
         }
     }
 
@@ -99,3 +99,24 @@ int Stitcher::stitch(cv::Mat leftImg, cv::Mat rightImg, cv::Mat &out)
     return 0;
 }
 
+int Stitcher::stitch(std::vector<cv::Mat> images, cv::Mat& out) {
+    if (images.size() == 0) {
+        fprintf(stderr, "No images to stitch");
+        return -1;
+    }
+
+    while (images.size() > 1) {
+        cv::Mat result;
+        stitch(images[0], images[1], result);
+
+        // TODO: images should really be a stack
+        images.erase(images.begin());
+        images.erase(images.begin());
+
+        images.insert(images.begin(), result);
+    }
+
+    out = cv::Mat(images.front());
+
+    return 0;
+}
